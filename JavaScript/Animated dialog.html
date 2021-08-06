@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<head>
+<meta charset=UTF-8>
+<title>Dialog demo</title>
+<style>
+	.dialog {
+		border: none;
+		border-radius: 3px;
+		box-shadow: 0 3px 7px rgba(0, 0, 0, 0.3);
+	}
+	.dialog[open] { animation: show-dialog .3s ease; }
+	.dialog.hide { animation: hide-dialog .3s ease; }
+	@keyframes show-dialog {
+		from { transform: scale(0.7); opacity: 0; }
+		to { transform: scale(1); opacity: 1; }
+	}
+	@keyframes hide-dialog{
+		from { transform: scale(1); opacity: 1; }
+		to { transform: scale(0.7); opacity: 0; }
+	}
+</style>
+</head>
+<body>
+
+	<dialog class="dialog">
+		<p>This is a dialog!</p>
+		<button id="close">Close Dialog!</button>
+	</dialog>
+
+	<button id="show">Open Dialog!</button>
+
+<script>
+	const dialog = document.querySelector('dialog');
+
+	function open () {
+		dialog.showModal();
+	}
+
+	function close () {
+		dialog.classList.add('hide');
+		dialog.addEventListener('animationend', animEnd);
+	}
+
+	function animEnd () {
+		dialog.close();
+		dialog.classList.remove('hide');
+		dialog.removeEventListener('animationend',  animEnd, false);
+	}
+
+	document.querySelector('#show').addEventListener('click', open);
+	document.querySelector('#close').addEventListener('click', close);
+</script>
+</body>

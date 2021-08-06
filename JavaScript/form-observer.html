@@ -1,0 +1,56 @@
+<form class="form">
+  <input type="text" placeholder="enter text" name="name" value="">
+  <input type="checkbox" name="check">
+  <select name="select"><option value="select1">one</option><option value="select2">two</option></select>
+  <input name="radio" type="radio" value="radio1">
+  <input name="radio" type="radio" value="radio2">
+</form>
+
+<button class="start">Observe</button>
+<button class="stop">Stop observing</button>
+
+
+<script>
+var Form = function (sel) {
+	this.form = document.querySelector(sel);
+	this.fields = this.form.elements;
+};
+
+Form.prototype.update = function () {
+	if (!this.cb) return;
+	for (var i = 0, f; f = this.fields[i++] ;) {
+		var fname = f.name + 'val', ov = this.form.dataset[fname], v = f.value;
+		if (f.type === 'checkbox') {
+			v = f.checked;
+			ov = (ov === 'true');
+		}
+		else if (f.type === 'radio' && !f.checked) continue;
+		if (typeof ov === 'undefined' && typeof v !== 'undefined') {
+			if (f.type === 'radio') this.cb(v, ov, f);
+			ov = this.form.dataset[fname] = v;
+		}
+		else if (ov !== v) {
+			this.form.dataset[fname] = v;
+			this.cb(v, ov, f);
+		}
+	}
+	requestAnimationFrame(this.update.bind(this));
+};
+Form.prototype.observe = function (cb) { this.update(this.cb = cb); };
+Form.prototype.observeStop = function () { this.cb = null; };
+
+
+var form = new Form('.form');
+
+document.querySelector('.start').addEventListener('click', function () {
+	form.observe(function (nv, ov, f) {
+		console.log(nv, ov, f.name);
+	});
+});
+
+
+document.querySelector('.stop').addEventListener('click', function () {
+	form.observeStop();
+});
+
+</script>
