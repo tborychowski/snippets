@@ -1,0 +1,95 @@
+<html>
+<head>
+<style>
+.container ul {
+	--separator: ",";
+	--connector: "and";
+	padding: 0;
+	margin: 0;
+	display: inline;
+	list-style-type: none;
+}
+
+.container li { display: inline; }
+
+/* "Add a comma after each list item." */
+li::after{ content: var(--separator); color: #ef5016; transition: color ease 200ms; font-weight: 700; }
+
+/* "Hold on, add a comma along with an 'and' after the second last list item." */
+li:nth-last-of-type(2)::after{ content: var(--separator) " " var(--connector) " "; color: #0058ff; }
+
+/* "Hang on, only add an 'and' after the second last list item if it's the first list item as well." */
+li:first-of-type:nth-last-of-type(2)::after{ content: " " var(--connector); color: #178717; }
+
+/* "Finally, add a fullstop after the last list item." */
+li:last-of-type::after{ content: "."; color: #0000ff; }
+
+</style>
+</head>
+<body>
+	<a href="https://codepen.io/ShadowShahriar/pen/LYyvVjo">Source</a>
+
+	<div class="container">
+		<section>
+			<h2>single-item</h2>
+			<div>I want to have
+				<ul>
+					<li>a cup of coffee</li>
+				</ul>
+			</div>
+		</section>
+
+		<section>
+			<h2>two-items</h2>
+			<div>I would invite
+				<ul>
+					<li>Jim</li>
+					<li>Tobu</li>
+				</ul>
+			</div>
+		</section>
+
+		<section>
+			<h2>three-items</h2>
+			<div>I want to learn
+				<ul>
+					<li>bicycling</li>
+					<li>singing</li>
+					<li>dancing</li>
+				</ul>
+			</div>
+		</section>
+
+		<section>
+			<h2>four-items</h2>
+			<div>My preferred programming languages are
+				<ul>
+					<li>CSS</li>
+					<li>TypeScript</li>
+					<li>C</li>
+					<li>Ruby</li>
+				</ul>
+			</div>
+		</section>
+
+		<section>
+			<h2>many-items</h2>
+			<div>My best friends are
+				<ul>
+					<li>Prit</li>
+					<li>Aditi</li>
+					<li>Charu</li>
+					<li>Srushti</li>
+					<li>Sellami</li>
+					<li>Gourav</li>
+					<li>Chris</li>
+					<li>Nazanin</li>
+					<li>Zeenat</li>
+					<li>Josias</li>
+					<li>Toshiya</li>
+				</ul>
+			</div>
+		</section>
+	</div>
+</body>
+</html>
