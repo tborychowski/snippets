@@ -1,5 +1,15 @@
-const _cache = {};
+export const EVENT = {
+	on,
+	off,
+	fire,
 
+	document: {
+		clicked: 'document-clicked'
+	},
+}
+
+
+const _cache = {};
 function fire (topic, ...args) {
 	if (!_cache[topic]) return;
 	_cache[topic].forEach(cb => {
@@ -16,16 +26,7 @@ function on (topic, callback) {
 function off (handle) {
 	let [topic, cb] = handle, ca = _cache[topic];
 	cb = cb.toString();
-	if (ca) {
-		ca.forEach((fn, i) => {
-			if (fn.toString() === cb) ca.splice(i, 1);
-		});
-	}
+	if (ca) ca.forEach((fn, i) => {
+		if (fn.toString() === cb) ca.splice(i, 1);
+	});
 }
-
-
-export {
-	on,
-	off,
-	fire
-};
