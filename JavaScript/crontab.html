@@ -1,0 +1,88 @@
+<style>
+	* { box-sizing: border-box; }
+	form { padding: 50px; float: left; }
+	input[type=text] { width: 700px; margin: 10px; padding: 3px 4px; }
+	fieldset { float: left; padding: 20px; margin: 10px; }
+	select { overflow: auto; height: 120px; min-width: 150px; }
+	.output { float: none; width: 100%; }
+</style>
+
+<form id="form">
+	<fieldset>
+		<legend>Minutes</legend>
+		<label><input type="radio" name="minType" value="every" checked/> Every x minutes</label><br>
+		<label><input type="radio" name="minType" value="at"/> At selected minutes</label><br>
+		<select name="minSelect" multiple><option>0</option><option selected>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option><option>32</option><option>33</option><option>34</option><option>35</option><option>36</option><option>37</option><option>38</option><option>39</option><option>40</option><option>41</option><option>42</option><option>43</option><option>44</option><option>45</option><option>46</option><option>47</option><option>48</option><option>49</option><option>50</option><option>51</option><option>52</option><option>53</option><option>54</option><option>55</option><option>56</option><option>57</option><option>58</option><option>59</option></select>
+	</fieldset>
+
+	<fieldset>
+		<legend>Hours</legend>
+		<label><input type="radio" name="hourType" value="every" checked/> Every x hours</label><br>
+		<label><input type="radio" name="hourType" value="at"/> At selected hours</label><br>
+		<select name="hourSelect" multiple><option>0</option><option selected>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option></select>
+	</fieldset>
+
+	<fieldset>
+		<legend>Days</legend>
+		<label><input type="radio" name="dayType" value="every" checked/> Every x days</label><br>
+		<label><input type="radio" name="dayType" value="at"/> At selected days</label><br>
+		<select name="daySelect" multiple><option>0</option><option selected>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option><option>13</option><option>14</option><option>15</option><option>16</option><option>17</option><option>18</option><option>19</option><option>20</option><option>21</option><option>22</option><option>23</option><option>24</option><option>25</option><option>26</option><option>27</option><option>28</option><option>29</option><option>30</option><option>31</option></select>
+	</fieldset>
+
+	<fieldset>
+		<legend>Months</legend>
+		<label><input type="radio" name="monthType" value="every" checked/> Every x months</label><br>
+		<label><input type="radio" name="monthType" value="at"/> At selected months</label><br>
+		<select name="monthSelect" multiple><option value="1">January</option><option value="2">February</option><option value="3">March</option><option value="4">April</option><option value="5">May</option><option value="6">June</option><option value="7">July</option><option value="8">Augest</option><option value="9">September</option><option value="10">October</option><option value="11">November</option><option value="12">December</option></select>
+	</fieldset>
+
+	<fieldset>
+		<legend>Weekdays</legend>
+		<label><input type="radio" name="weekdayType" value="every" checked/> Every x weekday</label><br>
+		<label><input type="radio" name="weekdayType" value="at"/> At selected weekdays</label><br>
+		<select name="weekdaySelect" multiple><option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option></select>
+	</fieldset>
+
+	<input type="text" id="crontab" placeholder="output">
+	<button id="button">Update</button>
+</form>
+
+<script>
+var _form = document.getElementById('form'),
+	_inp = document.getElementById('crontab'),
+	_btn = document.getElementById('button'),
+	_fields = [ 'min', 'hour', 'day', 'month', 'weekday' ],
+	_getType = function (name) { return _form.querySelector('[name="' + name + 'Type"]:checked').value; }
+	_getSelected = function (name) {
+		var vals = [], options = _form.querySelectorAll('[name="' + name + 'Select"] option:checked'), i = 0;
+		for (; opt = options[i++] ;) vals.push(opt.value);
+		return vals;
+	},
+	_areConsecutive = function (nums) {
+		for (var i = 0, n = +nums[0], num; num = nums[i]; i++, n++) if (n != num) return false;
+		return true;
+	},
+	_getDataValue = function (item) {
+		if (item.type === 'at') {
+			if (item.sel.length > 1 && _areConsecutive(item.sel)) return item.sel[0] + '-' + item.sel[item.sel.length - 1];
+			return item.sel.join(',');
+		}
+		else if (item.sel.length === 1 && item.sel[0] !== '1') return '*/' + item.sel[0];
+		else return '*';
+	},
+	_readForm = function () {
+		var data = {};
+		_fields.forEach(function (field) { data[field] = { type: _getType(field), sel: _getSelected(field) }; });
+		return data;
+	},
+	_generateCron = function (data) {
+		var cron = [];
+		_fields.forEach(function (field) { cron.push(_getDataValue(data[field])); });
+		cron.push('<command>');
+		return cron.join('    ');
+	},
+	_onSubmit = function (e) { e.preventDefault(); _inp.value = _generateCron(_readForm()); };
+
+_form.addEventListener('submit', _onSubmit, false);
+_btn.addEventListener('click', _onSubmit, false);
+</script>
