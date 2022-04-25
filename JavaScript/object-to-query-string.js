@@ -7,3 +7,12 @@ function objectToQueryString (obj) {
 	};
 	return Object.entries(obj).reduce(reducer, '');
 }
+
+
+
+
+// better and more modern
+function objectToQueryString (obj) {
+	if (!obj) return '';
+	return '?' + new URLSearchParams(obj).toString();
+}
