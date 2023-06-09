@@ -17,7 +17,7 @@ function timeAgo (date) {
 	];
 	const chunks = [];
 	while (seconds > 60) {
-		const interval = intervals.find(i => i.seconds < seconds);
+		const interval = intervals.find(i => i.seconds < seconds) || { seconds: 0, label: ''};
 		const count = Math.floor(seconds / (interval.seconds || seconds));
 		chunks.push(`${count} ${interval.label}${count !== 1 ? 's' : ''}`);
 		seconds -= count * (interval.seconds || seconds);
